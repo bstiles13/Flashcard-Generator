@@ -28,41 +28,59 @@ function randomize() {
         placeholder.splice(placeholder.indexOf(uproot), 1);
     }
 
-    console.log(randomArray);
+    // console.log(randomArray);
     count = randomArray.length - 1;
 }
 
 randomize();
 
 function start() {
-var question;
-var answer;
-	if (randomArray[count].front != null) {
-		question = randomArray[count].front;
-		answer = randomArray[count].back;
-	} else if (randomArray[count].partial != null) {
-		question = randomArray[count].partial;
-		answer = randomArray[count].cloze;
-	}
     inquirer.prompt([{
-        type: 'input',
-        message: question,
-        name: 'guess',
+        type: 'list',
+        message: 'Star Wars Flashcards',
+        choices: ['Play', 'Exit'],
+        name: 'play'
     }]).then(function(user) {
-    	if (user.guess === answer) {
-    		console.log('Correct!');
-    		correct++;
-    	} else {
-    		console.log('Wrong!');
-    		console.log('Answer: ' + answer);
-    	}
-    	if (count > 0) {
-    		count--;
-    		start();
-    	} else {
-    		console.log('Game over. You answered ' + correct + ' of ' + randomArray.length + ' questions correctly.');
-    	}
-    })
+        if (user.play === "Exit") {
+            return;
+        } else if (user.play === "Play") {
+            play();
+        }
+})
 }
 
 start();
+
+
+function play() {
+            var question;
+            var answer;
+            if (randomArray[count].front != null) {
+                question = randomArray[count].front;
+                answer = randomArray[count].back;
+            } else if (randomArray[count].partial != null) {
+                question = randomArray[count].partial;
+                answer = randomArray[count].cloze;
+            }
+            inquirer.prompt([{
+                type: 'input',
+                message: question,
+                name: 'guess',
+            }]).then(function(user) {
+                if (user.guess.toLowerCase() === answer.toLowerCase()) {
+                    console.log('Correct!');
+                    correct++;
+                } else {
+                    console.log('Wrong!');
+                    console.log('Answer: ' + answer);
+                }
+                if (count > 0) {
+                    count--;
+                    play();
+                } else {
+                    console.log('Game over. You answered ' + correct + ' of ' + randomArray.length + ' questions correctly.');
+                    start();
+                }
+            })
+
+}
